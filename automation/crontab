@@ -1,0 +1,10 @@
+# root crontab (crontab -e)
+# m  h  dom mon dow  command
+# 18:00 - antivirus scan of the data directory
+0  18 *   *   *    clamscan -r /srv --log=/var/log/scan_antivirus.log
+# 19:00 - archive the logs to the backup disk
+0  19 *   *   *    tar -czf /backup/logs_$(date +\%F).tar.gz /var/log
+# 20:00 - install security updates
+0  20 *   *   *    apt-get update && apt-get upgrade -y
+# 20:30 - schedule the night shutdown (21:00) and the wake-up (06:00)
+30 20 *   *   *    /usr/local/bin/shutdown_and_wakeup.sh

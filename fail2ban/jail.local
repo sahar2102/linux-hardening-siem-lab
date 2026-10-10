@@ -1,0 +1,13 @@
+# /etc/fail2ban/jail.local
+[DEFAULT]
+bantime  = 1h
+findtime = 10m
+maxretry = 3
+# never ban localhost
+ignoreip = 127.0.0.1/8
+
+[sshd]
+enabled  = true
+# SSH runs on a custom port, so the ban must target that port (default is 22)
+port     = 2102
+backend  = systemd

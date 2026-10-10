@@ -1,0 +1,52 @@
+# /etc/ssh/sshd_config - hardened SSH server (Ubuntu 24.04, OpenSSH 9.6)
+Include /etc/ssh/sshd_config.d/*.conf
+
+# --- Network ---
+Port 2102
+AddressFamily inet
+
+# --- Authentication ---
+PermitRootLogin no
+PermitEmptyPasswords no
+PasswordAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
+# keyboard-interactive is needed for the TOTP second factor (pam_google_authenticator)
+KbdInteractiveAuthentication yes
+UsePAM yes
+# Two factors: SSH key + one-time code
+AuthenticationMethods publickey,keyboard-interactive
+GSSAPIAuthentication no
+HostbasedAuthentication no
+LoginGraceTime 30
+MaxAuthTries 3
+MaxSessions 3
+
+# Only members of the sshusers group may log in
+AllowGroups sshusers
+
+# --- Idle sessions ---
+# Close interactive sessions after 5 minutes without traffic
+ChannelTimeout session=5m
+UnusedConnectionTimeout 5m
+ClientAliveInterval 300
+ClientAliveCountMax 1
+
+# --- Strong cryptography only ---
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+KexAlgorithms curve25519-sha256
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-sha2-512,hmac-sha2-256
+
+# --- Misc ---
+X11Forwarding no
+AllowTcpForwarding no
+PrintMotd no
+AcceptEnv LANG LC_*
+LogLevel VERBOSE
+Subsystem sftp internal-sftp
+
+# Business users (finance, claims) may only transfer files over SFTP
+Match User ahmed_finance,karim_sinistre
+    ForceCommand internal-sftp
+    PermitTTY no
+    AllowTcpForwarding no

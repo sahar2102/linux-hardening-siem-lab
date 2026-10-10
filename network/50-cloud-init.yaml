@@ -1,0 +1,15 @@
+# /etc/netplan/50-cloud-init.yaml
+# enp0s3 = host-only network shared with the Kali and Wazuh VMs
+# (a second NAT interface gives Internet access for updates)
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:
+      dhcp4: true
+      dhcp4-overrides:
+        use-dns: false
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 1.1.1.1

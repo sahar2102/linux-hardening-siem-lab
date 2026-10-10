@@ -1,0 +1,13 @@
+# /etc/pam.d/sshd (relevant lines)
+# Password login is disabled in sshd_config, so the SSH key is the first factor
+# and the TOTP code (Google Authenticator) is the second factor.
+# Setup per user:  sudo apt install libpam-google-authenticator && google-authenticator
+#
+# Comment out the default password prompt so only the TOTP code is asked:
+# @include common-auth
+auth       required     pam_google_authenticator.so
+
+account    required     pam_nologin.so
+@include common-account
+@include common-session
+@include common-password
